@@ -1,6 +1,7 @@
 import cv2
 import imutils
 
+# haar_upper_body_cascade = cv2.CascadeClassifier("haarcascade_upperbody.xml")
 haar_upper_body_cascade = cv2.CascadeClassifier("haarcascade_upperbody.xml")
 
 # Uncomment this for real-time webcam detection

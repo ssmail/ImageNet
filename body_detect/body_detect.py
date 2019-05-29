@@ -7,7 +7,7 @@ import cv2
 import time
 
 person_cascade = cv2.CascadeClassifier(
-        os.path.join('haarcascade_fullbody.xml')
+        os.path.join('haarcascade_upperbody.xml')
 )
 
 cap = cv2.VideoCapture("demo.mp4")
