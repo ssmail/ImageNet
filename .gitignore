@@ -1,0 +1,6 @@
+.idea
+.idaea/**
+*.mp4
+.vscode/
+ .idea/*.*
+.idea/workspace.xml
