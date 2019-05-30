@@ -12,10 +12,17 @@ person_cascade = cv2.CascadeClassifier(
 
 cap = cv2.VideoCapture("demo.mp4")
 
+index = 0
 while True:
     r, frame = cap.read()
 
     if r:
+        index += 1
+
+        if index % 5 != 0:
+            continue
+
+        print(index)
         # start_time = time.time()
         frame = cv2.resize(frame, (640, 360))  # Downscale to improve frame rate
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)  # Haar-cascade classifier needs a grayscale image

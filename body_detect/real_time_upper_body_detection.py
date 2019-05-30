@@ -2,7 +2,7 @@ import cv2
 import imutils
 
 # haar_upper_body_cascade = cv2.CascadeClassifier("haarcascade_upperbody.xml")
-haar_upper_body_cascade = cv2.CascadeClassifier("haarcascade_upperbody.xml")
+haar_upper_body_cascade = cv2.CascadeClassifier("haarcascade_fullbody.xml")
 
 # Uncomment this for real-time webcam detection
 # If you have more than one webcam & your 1st/original webcam is occupied,
@@ -23,9 +23,9 @@ while True:
 
     upper_body = haar_upper_body_cascade.detectMultiScale(
             gray,
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(50, 100),
+            scaleFactor=1.2,
+            minNeighbors=1,
+            minSize=(10, 150),
             # Min size for valid detection, changes according to video size or body size in the video.
             flags=cv2.CASCADE_SCALE_IMAGE
     )
@@ -34,7 +34,7 @@ while True:
     for (x, y, w, h) in upper_body:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0),
                       1)  # creates green color rectangle with a thickness size of 1
-        cv2.putText(frame, "Upper Body Detected", (x + 5, y + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0),
+        cv2.putText(frame, "Body Detected", (x + 5, y + 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0),
                     2)  # creates green color text with text size of 0.5 & thickness size of 2
     cv2.imshow('Video', frame)  # Display video
 

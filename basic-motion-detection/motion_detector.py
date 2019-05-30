@@ -13,7 +13,7 @@ import cv2
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the video file")
-ap.add_argument("-a", "--min-area", type=int, default=800, help="minimum area size")
+ap.add_argument("-a", "--min-area", type=int, default=300, help="minimum area size")
 args = vars(ap.parse_args())
 
 # if the video argument is None, then we are reading from webcam
@@ -30,7 +30,7 @@ firstFrame = None
 
 # loop over the frames of the video
 
-start_frame = 200
+start_frame = 5
 index = 0
 
 while True:
@@ -43,6 +43,9 @@ while True:
     frame = frame if args.get("video", None) is None else frame[1]
     text = "Unoccupied"
 
+    if index % 10 != 0:
+        continue
+
     # if the frame could not be grabbed, then we have reached the end
     # of the video
     if frame is None:
@@ -50,10 +53,10 @@ while True:
 
     # resize the frame, convert it to grayscale, and blur it
     frame = imutils.resize(frame, width=500)
+
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
-    print(index)
     # if the first frame is None, initialize it
     if firstFrame is None and index > start_frame:
         print("init first frame")
@@ -68,12 +71,28 @@ while True:
     frameDelta = cv2.absdiff(firstFrame, gray)
     thresh = cv2.threshold(frameDelta, 100, 255, cv2.THRESH_BINARY)[1]
 
+    # dst_folder = "./images"
+    # if index < 4000 and index % 100 == 0:
+    #     save_path = "{}/{:>03d}.jpg".format(dst_folder, index)
+    #     cv2.imwrite(save_path, frame)
+
     # dilate the thresholded image to fill in holes, then find contours
     # on thresholded image
+
     thresh = cv2.dilate(thresh, None, iterations=2)
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-                            cv2.CHAIN_APPROX_SIMPLE)
+
+    cnts = cv2.findContours(
+            thresh.copy(),
+            cv2.RETR_EXTERNAL,
+            cv2.CHAIN_APPROX_SIMPLE
+    )
     cnts = imutils.grab_contours(cnts)
+
+    count = len(cnts)
+    cv2.putText(frame,
+                "Count: {}".format(count),
+                (0, 250),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
     # loop over the contours
     for c in cnts:
@@ -88,15 +107,15 @@ while True:
         text = "Occupied"
 
     # draw the text and timestamp on the frame
-    cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-    cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
-                (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+    # cv2.putText(frame, "Room Status: {}".format(text), (10, 20),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    # cv2.putText(frame, datetime.datetime.now().strftime("%A %d %B %Y %I:%M:%S%p"),
+    #             (10, frame.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
     # show the frame and record if the user presses a key
     cv2.imshow("Security Feed", frame)
     cv2.imshow("Thresh", thresh)
-    cv2.imshow("Frame Delta", frameDelta)
+    # cv2.imshow("Frame Delta", frameDelta)
     key = cv2.waitKey(1) & 0xFF
 
     # if the `q` key is pressed, break from the lop
